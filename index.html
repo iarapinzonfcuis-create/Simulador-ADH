@@ -4,199 +4,321 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Simulador de ADH</title>
+
 <style>
 *{box-sizing:border-box}
-body{margin:0;font-family:Arial,sans-serif;background:#eef7ff;color:#17324d}
-.container{max-width:760px;margin:auto;padding:20px}
-header{background:#1769aa;color:white;padding:24px;border-radius:18px;text-align:center;margin-bottom:18px}
-h1{margin:0 0 8px} h2{color:#1769aa}
-.card{background:white;border-radius:18px;padding:20px;margin-bottom:16px;box-shadow:0 3px 12px #00000012}
-.variable{margin-bottom:20px}
-.variable h3{margin-bottom:10px}
-label{display:block;padding:10px 12px;margin:7px 0;background:#f2f7fb;border-radius:10px;cursor:pointer}
-button{border:0;border-radius:12px;padding:13px 18px;font-weight:bold;cursor:pointer}
-.main-btn{width:100%;background:#1769aa;color:white;font-size:16px}
-.mode-buttons{display:flex;gap:10px;margin-bottom:15px}
-.mode-buttons button{flex:1;background:#d9ebf8;color:#1769aa}
-.mode-buttons button.active{background:#1769aa;color:white}
-.result{text-align:center}
-.level{font-size:20px;font-weight:bold;margin:10px}
-.boxes{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-.box{background:#f2f7fb;border-radius:14px;padding:14px}
-.value{font-size:22px;font-weight:bold;color:#1769aa;margin-top:8px}
-.bar{height:14px;background:#dbe8f1;border-radius:20px;overflow:hidden;margin-top:8px}
-.fill{height:100%;background:#1769aa;width:0%;transition:.5s}
-.explanation{line-height:1.5;background:#f7fbff;padding:15px;border-radius:12px;margin-top:15px}
-.reset{background:#e7eef3;color:#17324d;margin-top:12px}
-.hidden{display:none}
-@media(max-width:600px){.boxes{grid-template-columns:1fr}.container{padding:12px}}
+body{
+    margin:0;
+    font-family:Arial,Helvetica,sans-serif;
+    background:linear-gradient(135deg,#dff7ff,#f5fcff);
+    color:#173b52;
+}
+header{
+    background:linear-gradient(135deg,#087f9f,#32b6d4);
+    color:white;text-align:center;padding:35px 20px;
+    border-radius:0 0 35px 35px;
+    box-shadow:0 5px 20px rgba(0,0,0,.15);
+}
+header h1{margin:5px 0;font-size:32px}
+header p{margin:8px auto 0;max-width:600px;line-height:1.5}
+.contenedor{max-width:900px;margin:auto;padding:25px 15px 40px}
+.tarjeta{
+    background:white;border-radius:25px;padding:25px;margin-top:20px;
+    box-shadow:0 8px 25px rgba(24,100,120,.10)
+}
+.tarjeta h2{margin-top:0;color:#087f9f}
+.info{
+    background:#eafaff;border-left:5px solid #20a8c7;padding:18px;
+    border-radius:12px;line-height:1.6
+}
+.variable{margin-top:25px}
+.variable h3{margin-bottom:12px}
+.opciones{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.opciones input{display:none}
+.opciones label{
+    padding:16px 10px;background:#f0faff;border:2px solid #c8ebf4;
+    border-radius:15px;text-align:center;font-weight:bold;cursor:pointer;transition:.2s
+}
+.opciones label:hover{transform:translateY(-3px);border-color:#32b6d4}
+.opciones input:checked+label{
+    background:linear-gradient(135deg,#087f9f,#32b6d4);
+    color:white;border-color:#087f9f;transform:translateY(-2px)
+}
+.boton{
+    width:100%;border:none;padding:17px;margin-top:25px;border-radius:15px;
+    background:linear-gradient(135deg,#087f9f,#32b6d4);
+    color:white;font-size:18px;font-weight:bold;cursor:pointer;transition:.2s
+}
+.boton:hover{transform:translateY(-2px)}
+.boton-secundario{background:#e6f6fa;color:#087f9f}
+#resultado{display:none}
+#resultado.visible{display:block;animation:aparecer .5s ease}
+@keyframes aparecer{
+    from{opacity:0;transform:translateY(15px)}
+    to{opacity:1;transform:translateY(0)}
+}
+.necesidad{
+    text-align:center;padding:25px;
+    background:linear-gradient(135deg,#e8faff,#f8fdff);
+    border-radius:20px
+}
+.necesidad small{color:#607d8b}
+.necesidad h2{font-size:34px;margin:8px 0}
+.resultados{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:15px;margin-top:20px
+}
+.resultado-box{
+    background:#f8fdff;border:2px solid #d8f0f5;border-radius:18px;
+    padding:20px;text-align:center
+}
+.resultado-box h3{font-size:16px;margin:10px 0}
+.resultado-box p{font-size:21px;font-weight:bold;color:#087f9f;margin:0}
+.barra-contenedor{margin-top:18px}
+.barra-titulo{
+    display:flex;justify-content:space-between;margin-bottom:7px;font-weight:bold
+}
+.barra{height:18px;background:#e3f2f6;border-radius:20px;overflow:hidden}
+.barra-interior{
+    height:100%;width:0%;
+    background:linear-gradient(90deg,#32b6d4,#087f9f);
+    border-radius:20px;transition:width 1s ease
+}
+.explicacion{
+    margin-top:20px;padding:20px;background:#fff9e8;
+    border-left:5px solid #e6b93d;border-radius:12px;line-height:1.6
+}
+.osmolaridad{
+    margin-top:15px;padding:20px;text-align:center;
+    background:#eefaff;border-radius:18px
+}
+.osmolaridad strong{font-size:25px;color:#087f9f}
+.aviso{text-align:center;color:#71838c;font-size:13px;margin-top:25px}
+@media(max-width:650px){
+    .opciones,.resultados{grid-template-columns:1fr}
+    header h1{font-size:27px}
+}
 </style>
 </head>
+
 <body>
-<div class="container">
+
 <header>
-<h1>Simulador de ADH</h1>
-<p>Observa cómo cambian la ADH, la reabsorción de agua y la orina.</p>
+    <h1>Simulador de ADH</h1>
+    <p>Descubre cómo diferentes condiciones pueden afectar la conservación de agua en el organismo.</p>
 </header>
 
-<div class="card">
-<h2>¿Qué es la ADH?</h2>
-<p>La ADH es una hormona que ayuda al cuerpo a conservar agua. Cuando el cuerpo necesita conservar más agua, aumenta la ADH y los riñones reabsorben más agua.</p>
+<div class="contenedor">
+
+<div class="tarjeta">
+    <h2>¿Qué es la ADH?</h2>
+    <div class="info">
+        La <strong>ADH</strong> (hormona antidiurética) ayuda al organismo a conservar agua.
+        <br><br>
+        Cuando el cuerpo necesita conservar más agua, aumenta la acción de la ADH.
+        Esto favorece la reabsorción de agua en los riñones y produce una orina más concentrada.
+    </div>
 </div>
 
-<div class="card">
-<div class="variable">
-<h3>1. Agua que bebiste</h3>
-<label><input type="radio" name="agua" value="2"> Poca</label>
-<label><input type="radio" name="agua" value="1"> Normal</label>
-<label><input type="radio" name="agua" value="0"> Mucha</label>
+<div class="tarjeta">
+    <h2>Selecciona las condiciones</h2>
+
+    <div class="variable">
+        <h3>Agua que bebiste</h3>
+        <div class="opciones">
+            <input type="radio" name="agua" id="agua1" value="2"><label for="agua1">Poca</label>
+            <input type="radio" name="agua" id="agua2" value="1"><label for="agua2">Normal</label>
+            <input type="radio" name="agua" id="agua3" value="0"><label for="agua3">Mucha</label>
+        </div>
+    </div>
+
+    <div class="variable">
+        <h3>Actividad física</h3>
+        <div class="opciones">
+            <input type="radio" name="actividad" id="actividad1" value="0"><label for="actividad1">Ninguna</label>
+            <input type="radio" name="actividad" id="actividad2" value="1"><label for="actividad2">Moderada</label>
+            <input type="radio" name="actividad" id="actividad3" value="2"><label for="actividad3">Intensa</label>
+        </div>
+    </div>
+
+    <div class="variable">
+        <h3>Temperatura del ambiente</h3>
+        <div class="opciones">
+            <input type="radio" name="temperatura" id="temperatura1" value="0"><label for="temperatura1">Fresca</label>
+            <input type="radio" name="temperatura" id="temperatura2" value="1"><label for="temperatura2">Normal</label>
+            <input type="radio" name="temperatura" id="temperatura3" value="2"><label for="temperatura3">Muy caliente</label>
+        </div>
+    </div>
+
+    <div class="variable">
+        <h3>Tiempo sin beber agua</h3>
+        <div class="opciones">
+            <input type="radio" name="tiempo" id="tiempo1" value="0"><label for="tiempo1">Poco</label>
+            <input type="radio" name="tiempo" id="tiempo2" value="1"><label for="tiempo2">Moderado</label>
+            <input type="radio" name="tiempo" id="tiempo3" value="2"><label for="tiempo3">Mucho</label>
+        </div>
+    </div>
+
+    <button class="boton" onclick="calcular()">CALCULAR RESULTADO</button>
 </div>
 
-<div class="variable">
-<h3>2. Actividad física</h3>
-<label><input type="radio" name="actividad" value="0"> Ninguna</label>
-<label><input type="radio" name="actividad" value="1"> Moderada</label>
-<label><input type="radio" name="actividad" value="2"> Intensa</label>
+<div class="tarjeta" id="resultado">
+    <h2>Resultado de la simulación</h2>
+
+    <div class="necesidad">
+        <small>NECESIDAD DE CONSERVAR AGUA</small>
+        <h2 id="necesidad">—</h2>
+    </div>
+
+    <div class="resultados">
+        <div class="resultado-box">
+            <h3>Hormona ADH</h3>
+            <p id="adh">—</p>
+        </div>
+        <div class="resultado-box">
+            <h3>Reabsorción de agua</h3>
+            <p id="reabsorcion">—</p>
+        </div>
+        <div class="resultado-box">
+            <h3>Tipo de orina</h3>
+            <p id="orina">—</p>
+        </div>
+    </div>
+
+    <div class="barra-contenedor">
+        <div class="barra-titulo">
+            <span>Nivel de ADH</span>
+            <span id="adhPorcentaje">0%</span>
+        </div>
+        <div class="barra">
+            <div class="barra-interior" id="barraADH"></div>
+        </div>
+    </div>
+
+    <div class="barra-contenedor">
+        <div class="barra-titulo">
+            <span>Reabsorción de agua</span>
+            <span id="reabsPorcentaje">0%</span>
+        </div>
+        <div class="barra">
+            <div class="barra-interior" id="barraReabs"></div>
+        </div>
+    </div>
+
+    <div class="osmolaridad">
+        Osmolaridad urinaria
+        <br><br>
+        <strong id="osmolaridad">—</strong>
+        <br>
+        mOsm/kg
+    </div>
+
+    <div class="explicacion" id="explicacion">—</div>
+
+    <button class="boton boton-secundario" onclick="reiniciar()">Nueva simulación</button>
 </div>
 
-<div class="variable">
-<h3>3. Temperatura del ambiente</h3>
-<label><input type="radio" name="temperatura" value="0"> Fresca</label>
-<label><input type="radio" name="temperatura" value="1"> Normal</label>
-<label><input type="radio" name="temperatura" value="2"> Muy caliente</label>
-</div>
+<p class="aviso">
+    Los porcentajes y valores de osmolaridad son simulados con fines educativos.
+    No representan mediciones clínicas reales.
+</p>
 
-<div class="variable">
-<h3>4. Tiempo sin beber agua</h3>
-<label><input type="radio" name="tiempo" value="0"> Poco</label>
-<label><input type="radio" name="tiempo" value="1"> Moderado</label>
-<label><input type="radio" name="tiempo" value="2"> Mucho</label>
-</div>
-
-<button class="main-btn" onclick="calcular()">CALCULAR RESULTADO</button>
-</div>
-
-<div id="resultado" class="card hidden">
-<h2>Resultado de la simulación</h2>
-<div class="mode-buttons">
-<button id="btn6" class="active" onclick="cambiarModo(6)">Nivel 6°</button>
-<button id="btn8" onclick="cambiarModo(8)">Nivel 8°</button>
-</div>
-
-<div class="level" id="necesidad"></div>
-
-<div class="boxes">
-<div class="box">
-<div>Hormona ADH</div>
-<div class="value" id="adh"></div>
-<div class="bar"><div class="fill" id="adhBar"></div></div>
-</div>
-<div class="box">
-<div>Reabsorción de agua</div>
-<div class="value" id="reabs"></div>
-<div class="bar"><div class="fill" id="reabsBar"></div></div>
-</div>
-<div class="box">
-<div>Tipo de orina</div>
-<div class="value" id="orina"></div>
-</div>
-</div>
-
-<div id="osmBox" class="box hidden" style="margin-top:12px">
-<div>Osmolaridad urinaria</div>
-<div class="value" id="osm"></div>
-</div>
-
-<div class="explanation" id="explicacion"></div>
-<button class="reset" onclick="reiniciar()">Nueva simulación</button>
-</div>
 </div>
 
 <script>
-let datosActuales=null;
-let modo=6;
-
-function obtenerValor(nombre){
- const elegido=document.querySelector('input[name="'+nombre+'"]:checked');
- return elegido ? Number(elegido.value) : null;
+function obtenerValor(nombre) {
+    const opcion = document.querySelector('input[name="' + nombre + '"]:checked');
+    return opcion ? Number(opcion.value) : null;
 }
 
-function calcular(){
- const agua=obtenerValor("agua");
- const actividad=obtenerValor("actividad");
- const temperatura=obtenerValor("temperatura");
- const tiempo=obtenerValor("tiempo");
+function calcular() {
+    const agua = obtenerValor("agua");
+    const actividad = obtenerValor("actividad");
+    const temperatura = obtenerValor("temperatura");
+    const tiempo = obtenerValor("tiempo");
 
- if([agua,actividad,temperatura,tiempo].includes(null)){
-   alert("Selecciona una opción en cada variable.");
-   return;
- }
+    if (agua === null || actividad === null || temperatura === null || tiempo === null) {
+        alert("Selecciona una opción en las cuatro variables.");
+        return;
+    }
 
- const puntos=agua+actividad+temperatura+tiempo;
- let nivel,adh,reabs,osm,orina;
+    const puntaje = agua + actividad + temperatura + tiempo;
 
- if(puntos<=2){nivel="BAJA";adh=25;reabs=45;osm=250;orina="Diluida";}
- else if(puntos<=4){nivel="MEDIA";adh=50;reabs=70;osm=500;orina="Normal";}
- else if(puntos<=6){nivel="ALTA";adh=75;reabs=88;osm=700;orina="Concentrada";}
- else{nivel="MUY ALTA";adh=90;reabs=95;osm=850;orina="Concentrada";}
+    let necesidad, adh, reabs, osmolaridad, orina;
 
- datosActuales={nivel,adh,reabs,osm,orina,puntos};
- document.getElementById("resultado").classList.remove("hidden");
- mostrarResultado();
- document.getElementById("resultado").scrollIntoView({behavior:"smooth"});
+    if (puntaje <= 2) {
+        necesidad = "BAJA";
+        adh = 25;
+        reabs = 45;
+        osmolaridad = 250;
+        orina = "DILUIDA";
+    } else if (puntaje <= 4) {
+        necesidad = "MEDIA";
+        adh = 50;
+        reabs = 70;
+        osmolaridad = 500;
+        orina = "NORMAL";
+    } else if (puntaje <= 6) {
+        necesidad = "ALTA";
+        adh = 75;
+        reabs = 88;
+        osmolaridad = 700;
+        orina = "CONCENTRADA";
+    } else {
+        necesidad = "MUY ALTA";
+        adh = 90;
+        reabs = 95;
+        osmolaridad = 850;
+        orina = "CONCENTRADA";
+    }
+
+    document.getElementById("resultado").classList.add("visible");
+    document.getElementById("necesidad").textContent = necesidad;
+    document.getElementById("adh").textContent = adh + "%";
+    document.getElementById("reabsorcion").textContent = reabs + "%";
+    document.getElementById("orina").textContent = orina;
+
+    document.getElementById("barraADH").style.width = adh + "%";
+    document.getElementById("barraReabs").style.width = reabs + "%";
+
+    document.getElementById("adhPorcentaje").textContent = adh + "%";
+    document.getElementById("reabsPorcentaje").textContent = reabs + "%";
+
+    document.getElementById("osmolaridad").textContent = osmolaridad;
+
+    let explicacion;
+
+    if (puntaje >= 5) {
+        explicacion =
+            "El organismo necesita conservar más agua. En esta simulación, " +
+            "la ADH aumenta y favorece la reabsorción de agua en los riñones. " +
+            "Por eso la orina se vuelve más concentrada.";
+    } else {
+        explicacion =
+            "El organismo tiene una menor necesidad de conservar agua. " +
+            "En esta simulación, la ADH es menor, se reabsorbe menos agua " +
+            "y la orina resulta más diluida.";
+    }
+
+    document.getElementById("explicacion").textContent = explicacion;
+
+    document.getElementById("resultado").scrollIntoView({
+        behavior: "smooth"
+    });
 }
 
-function mostrarResultado(){
- const d=datosActuales;
- document.getElementById("necesidad").textContent="Necesidad de conservar agua: "+d.nivel;
- document.getElementById("adh").textContent=modo===6?convertirNivel(d.adh,"adh"):d.adh+"%";
- document.getElementById("reabs").textContent=modo===6?convertirNivel(d.reabs,"reabs"):d.reabs+"%";
- document.getElementById("orina").textContent=d.orina;
- document.getElementById("adhBar").style.width=d.adh+"%";
- document.getElementById("reabsBar").style.width=d.reabs+"%";
+function reiniciar() {
+    document.querySelectorAll('input[type="radio"]').forEach(input => {
+        input.checked = false;
+    });
 
- const osmBox=document.getElementById("osmBox");
- if(modo===8){
-   osmBox.classList.remove("hidden");
-   document.getElementById("osm").textContent=d.osm+" mOsm/kg";
- }else{
-   osmBox.classList.add("hidden");
- }
+    document.getElementById("resultado").classList.remove("visible");
 
- let texto="";
- if(d.nivel==="BAJA") texto="El cuerpo tiene suficiente agua, por eso necesita conservar poca. La ADH es baja y se produce una orina más diluida.";
- else if(d.nivel==="MEDIA") texto="El cuerpo necesita conservar una cantidad moderada de agua. La ADH y la reabsorción están en niveles medios.";
- else if(d.nivel==="ALTA") texto="El cuerpo necesita conservar bastante agua. La ADH aumenta, los riñones reabsorben más agua y la orina se concentra.";
- else texto="El cuerpo necesita conservar mucha agua. La ADH es muy alta, la reabsorción aumenta y la orina es muy concentrada.";
- document.getElementById("explicacion").textContent=texto;
-}
-
-function convertirNivel(valor,tipo){
- if(tipo==="adh"){
-   if(valor<=25)return "Baja";
-   if(valor<=50)return "Media";
-   if(valor<=75)return "Alta";
-   return "Muy alta";
- }
- if(valor<=45)return "Baja";
- if(valor<=70)return "Media";
- if(valor<=88)return "Alta";
- return "Muy alta";
-}
-
-function cambiarModo(n){
- modo=n;
- document.getElementById("btn6").classList.toggle("active",n===6);
- document.getElementById("btn8").classList.toggle("active",n===8);
- if(datosActuales) mostrarResultado();
-}
-
-function reiniciar(){
- datosActuales=null;
- document.getElementById("resultado").classList.add("hidden");
- document.querySelectorAll('input[type="radio"]').forEach(r=>r.checked=false);
- window.scrollTo({top:0,behavior:"smooth"});
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
 }
 </script>
+
 </body>
 </html>
